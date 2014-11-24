@@ -1,0 +1,30 @@
+﻿<Window x:Class="Bundox.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:convert="clr-namespace:Bundox.Converters"
+        Title="MainWindow" Height="350" Width="525">
+    
+    <Window.Resources>
+        <ResourceDictionary>
+            <convert:StringToHighlightedXamlConverter x:Key="CONVERTERS_StringToHightlightedXaml"/>
+        </ResourceDictionary>
+    </Window.Resources>
+    
+    <DockPanel>
+        <TextBox DockPanel.Dock="Top" Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+        <ListBox ItemsSource="{Binding SearchResults}"
+                 ScrollViewer.VerticalScrollBarVisibility="Visible">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <ContentControl
+                        Margin="7,0,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Content="{Binding Path=., Converter={StaticResource CONVERTERS_StringToHightlightedXaml}, Mode=OneTime}">
+                    </ContentControl>
+                    <!--<TextBlock Text="{Binding Name}" />-->
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </DockPanel>
+</Window>
