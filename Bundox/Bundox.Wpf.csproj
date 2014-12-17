@@ -58,8 +58,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\StringToHighlightedXamlConverter.cs" />
+    <Compile Include="Framework\AttachedProperties\WebBrowserUtility.cs" />
     <Compile Include="Framework\ViewModelBase.cs" />
     <Compile Include="SampleViewModel.cs" />
+    <Compile Include="ViewModels\SearchResultViewModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -106,6 +108,13 @@
       <Project>{db782b6f-7ba2-43de-8f4c-4dbf032d30a8}</Project>
       <Name>Bundox.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Bundox.Data.SQLite\Bundox.Data.SQLite.csproj">
+      <Project>{86278861-747c-4416-b705-fa80a24b9973}</Project>
+      <Name>Bundox.Data.SQLite</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Views\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

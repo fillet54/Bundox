@@ -3,6 +3,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using Bundox.Core.Extensions;
 using System.Collections.Generic;
+using System.Collections;
 
 namespace Test.Bundox.Core.Extensions
 {
@@ -14,7 +15,7 @@ namespace Test.Bundox.Core.Extensions
         {
             var results = "Original".Partition(numPartitions: 1);
 
-            CollectionAssert.AreEquivalent(new List<string> { "Original" }, results.First());
+            CollectionAssert.AreEqual(new List<string> { "Original" }, results.First());
         }
 
         [TestMethod]
@@ -31,14 +32,13 @@ namespace Test.Bundox.Core.Extensions
                 new List<string>{ "Or", "iginal"},
                 new List<string>{ "O", "riginal"}
             };
-            var x = results.ToList();
-            CollectionAssert.Equals(expected, results.ToList());
+            AssertContainsSameLists(expected, results.ToList());
         }
-        
+
         [TestMethod]
         public void threeParitionsReturnsASetOf21()
         {
-            var results = "Original".Partition(numPartitions: 3);
+            var actuals = "Original".Partition(numPartitions: 3);
 
             var expected = new List<List<string>> { 
                 new List<string>{ "Origin", "a", "l"}, 
@@ -68,7 +68,33 @@ namespace Test.Bundox.Core.Extensions
 
                 new List<string>{ "O", "r", "iginal"}
             };
-            CollectionAssert.Equals(expected, results.ToList());
+            AssertContainsSameLists(expected, actuals.ToList());
+        }
+
+        [TestMethod]
+        public void suffixesReturnsASequenceOfSuffixes()
+        {
+            CollectionAssert.AreEqual(new List<string> { "String", "tring", "ring", "ing", "ng", "g" }, "String".Suffixes().ToList());
+        }
+        
+        [TestMethod]
+        public void suffixesReturnsASingleItemSequenceIfStringHasLengthOfOne()
+        {
+            CollectionAssert.AreEqual(new List<string> { "S" }, "S".Suffixes().ToList());
+        }
+        
+        [TestMethod]
+        public void suffixesReturnsEmptySequenceForEmptyString()
+        {
+            CollectionAssert.AreEqual(new List<string>(), "".Suffixes().ToList());
+        }
+
+        private void AssertContainsSameLists(List<List<string>> expected, List<List<string>> actual)
+        {
+            actual
+            .Select((theActual, index) => new { theActual, index })
+            .ToList()
+            .ForEach(a => CollectionAssert.AreEqual(expected[a.index], a.theActual));
         }
     }
 }

@@ -1,19 +1,9 @@
 ﻿using Bundox.Core;
+using Bundox.Core.Data.DocSet;
 using Bundox.Core.Search;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Bundox.Data.SQLite.DocSet;
+using Bundox.Data.SQLite.Search;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Bundox
 {
@@ -26,8 +16,14 @@ namespace Bundox
         {
             InitializeComponent();
 
-            var suggester = new FuzzySuggester<SampleData>();
-            SampleDataRepository.LoadFromDb(t => suggester.AddToIndex(new SampleData { Id = t.Id, Name = t.Name, Description = "" }));
+            var docSetPath = @"C:\Projects\Docsets\Java.docset\Contents\Resources\docset.dsidx";
+            var indexPath = @"C:\Projects\Docsets\Java.docset\Contents\Resources\suffixindex.dsidx";
+
+            var repository = new SQLiteDocSetRepository(docSetPath);
+            var indexer = new SQLiteSuffixIndexer(indexPath);
+            var docSetIndex = new DocSetIndex(repository, indexer);
+
+            var suggester = new FuzzySuggester<DocSetEntity>(docSetIndex);
             this.DataContext = new SampleViewModel(suggester);
         }
     }

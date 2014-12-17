@@ -1,18 +1,32 @@
-﻿using Bundox.Core;
+﻿using Bundox.Core.Data.DocSet;
 using Bundox.Core.Search;
+using Bundox.ViewModels;
 using Bundox.Wpf.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Bundox
 {
     public class SampleViewModel : ViewModelBase
     {
-        private List<string> _SearchResults = new List<string>();
-        public List<string> SearchResults 
+        private string _PageSource;
+        public string PageSource
+        {
+            get { return _PageSource; }
+            set
+            {
+                if (_PageSource != value)
+                {
+                    _PageSource = value;
+                    RaisePropertyChanged("PageSource");
+                }
+            }
+        }
+
+        private List<SearchResultViewModel> _SearchResults = new List<SearchResultViewModel>();
+        public List<SearchResultViewModel> SearchResults 
         {
             get { return _SearchResults; }
             private set
@@ -21,6 +35,20 @@ namespace Bundox
                 {
                     _SearchResults = value;
                     RaisePropertyChanged("SearchResults");
+                }
+            }
+        }
+
+        private SearchResultViewModel _SelectedResult;
+        public SearchResultViewModel SelectedResult
+        {
+            get { return _SelectedResult; }
+            set
+            {
+                if (_SelectedResult != value)
+                {
+                    _SelectedResult = value;
+                    RaisePropertyChanged("SelectedResult");
                 }
             }
         }
@@ -43,14 +71,17 @@ namespace Bundox
         {
             var start = DateTime.UtcNow;
             var temp = Suggester.SuggestionsFor(searchQuery)
-                       .Select(sr => HighlightMatchedSubstrings(sr.Node.IndexOn, sr.MatchRanges))
-                       .Take(50)
-                       .ToList();
+                       .Take(50);
+
+            SearchResults = temp
+                            .Select(sr => new SearchResultViewModel
+                            {
+                                HighlightedName = HighlightMatchedSubstrings(sr.Node.IndexOn, sr.MatchRanges),
+                                Entity = sr.Node
+                            })
+                            .ToList();
             var end = DateTime.UtcNow;
             Console.WriteLine("Measured time: " + (end - start).TotalMilliseconds + "ms");
-
-            SearchResults = temp;
-
         }
 
         private string HIGHLIGHT_START = "|~S~|";
@@ -71,19 +102,30 @@ namespace Bundox
             return highlighted.ToString();
         }
 
-        private ISuggester<SampleData> Suggester { get; set; }
+        private ISuggester<DocSetEntity> Suggester { get; set; }
 
-        public SampleViewModel(ISuggester<SampleData> suggester)
+        public SampleViewModel(ISuggester<DocSetEntity> suggester)
         {
             Suggester = suggester;
 
+            var pathBase = @"C:\Projects\Docsets\Java.docset\Contents\Resources\Documents\";
             this.PropertyChanged += (s, e) =>
                 {
                     if (e.PropertyName == "SearchQuery")
                     {
                         OnSearchQueryUpdate(SearchQuery);
                     }
+                    else if (e.PropertyName == "SelectedResult")
+                    {
+                        if (SelectedResult != null)
+                        {
+                            var pageSource = pathBase + SelectedResult.Entity.Path;
+                            PageSource = pageSource;
+                        }
+                    }
                 };
+
+            PageSource = @"C:\Projects\Docsets\Java.docset\Contents\Resources\Documents\overview-summary.html";
         }
     }
 }

@@ -4,19 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Data.Linq.Mapping;
 
-namespace Bundox.Core.Model.DocSet
+namespace Bundox.Core.Data.DocSet
 {
     [Table(Name="ZTOKEN")]
-    public class Token
+    public class TokenEntity
     {
         [Column(Name = "Z_PK")]
         public int Id { get; set; }
 
-        [Column(Name = "Z_ENT")]
-        public int Ent { get; set; }
-
-        [Column(Name = "Z_OPT")]
-        public int Opt { get; set; }
+        [Column(Name = "ZMETAINFORMATION")]
+        public int MetaInformationId { get; set; }
 
         [Column(Name = "ZTOKENNAME")]
         public string Name { get; set; }

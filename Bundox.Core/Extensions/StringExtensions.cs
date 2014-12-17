@@ -28,5 +28,13 @@ namespace Bundox.Core.Extensions
                 }
             }
         }
+
+        public static IEnumerable<string> Suffixes(this string theString)
+        {
+            for (int i = 0; i < theString.Length; i++)
+            {
+                yield return theString.Substring(i);
+            }
+        }
     }
 }
